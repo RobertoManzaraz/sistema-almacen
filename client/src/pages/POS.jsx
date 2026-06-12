@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import Icon from "../components/ui/Icon";
 import Badge from "../components/ui/Badge";
 import Modal from "../components/ui/Modal";
-import { fmt, genId, isLow } from "../utils/helpers";
+import { fmt, isLow } from "../utils/helpers";
 import { api } from "../utils/api";
 
 const POS = ({ products, refreshProducts, refreshSales, cashSession, refreshSession, toast }) => {
@@ -92,37 +92,61 @@ const POS = ({ products, refreshProducts, refreshSales, cashSession, refreshSess
     };
 
     return (
-        <div>
-            <div className="mb-6">
-                <h2 className="text-3xl font-bold text-gray-900">Punto de Venta</h2>
-                <p className="text-gray-500 text-sm mt-0.5">Busca productos y registra ventas rápidamente</p>
+        <div className="animate-fade-in relative min-h-[calc(100vh-8rem)]">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                <div>
+                    <h2 className="text-2xl font-bold text-zinc-100 tracking-tight">Punto de Venta</h2>
+                    <p className="text-zinc-500 text-xs font-semibold mt-0.5">Busca productos y registra ventas rápidamente</p>
+                </div>
+                {cashSession && (
+                    <button 
+                        onClick={() => setCashModal(true)} 
+                        className="px-4 py-2 bg-zinc-900 border border-zinc-800 text-red-500 hover:text-red-400 hover:bg-zinc-850 rounded-xl text-xs font-bold transition-all"
+                    >
+                        🔒 Cerrar Turno (Caja Abierta)
+                    </button>
+                )}
             </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                 {/* Left: Search */}
                 <div className="lg:col-span-3">
                     <div className="relative mb-4">
-                        <Icon n="search" cls="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar producto por nombre o ID..."
-                            className="w-full pl-12 pr-4 py-3.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm" />
+                        <Icon n="search" cls="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+                        <input 
+                            value={search} 
+                            onChange={(e) => setSearch(e.target.value)} 
+                            placeholder="Buscar producto por nombre o código..."
+                            className="w-full pl-11 pr-4 py-3 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/20 bg-zinc-900 text-zinc-100 placeholder-zinc-600 transition-all font-medium" 
+                        />
                     </div>
                     {search.trim() ? (
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="bg-zinc-900 rounded-2xl border border-zinc-850/80 shadow-xl overflow-hidden">
                             {results.length === 0 ? (
-                                <div className="py-12 text-center text-gray-400">No se encontraron productos</div>
+                                <div className="py-12 text-center text-zinc-500 font-semibold">No se encontraron productos</div>
                             ) : results.map((p) => (
-                                <div key={p.id} className="flex items-center justify-between px-5 py-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
+                                <div key={p.id} className="flex items-center justify-between px-5 py-4 border-b border-zinc-850/50 last:border-0 hover:bg-zinc-950/20 transition-colors">
                                     <div className="flex-1">
-                                        <p className="font-semibold text-gray-800">{p.name}</p>
-                                        <div className="flex items-center gap-2 mt-0.5">
-                                            <span className="text-xs text-gray-400">{p.id}</span>
+                                        <p className="font-bold text-zinc-200 text-sm">{p.name}</p>
+                                        <div className="flex items-center gap-2 mt-1.5">
+                                            <span className="text-xxs text-zinc-500 font-mono">{p.id}</span>
                                             <Badge color="indigo">{p.category}</Badge>
-                                            {isLow(p) ? <Badge color={p.stock === 0 ? "red" : "orange"}>{p.stock === 0 ? "Agotado" : `Stock: ${p.stock}`}</Badge> : <Badge color="green">Stock: {p.stock}</Badge>}
+                                            {isLow(p) ? (
+                                                <Badge color={p.stock === 0 ? "red" : "orange"}>
+                                                    {p.stock === 0 ? "Agotado" : `Stock: ${p.stock}`}
+                                                </Badge>
+                                            ) : (
+                                                <Badge color="green">Stock: {p.stock}</Badge>
+                                            )}
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3 ml-4">
-                                        <span className="font-bold text-indigo-600 text-lg">{fmt(p.salePrice)}</span>
-                                        <button onClick={() => addToCart(p)} disabled={p.stock === 0}
-                                            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                                    <div className="flex items-center gap-3.5 ml-4">
+                                        <span className="font-bold text-red-500 text-base">{fmt(p.salePrice)}</span>
+                                        <button 
+                                            onClick={() => addToCart(p)} 
+                                            disabled={p.stock === 0}
+                                            className="px-3.5 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors premium-glow-red"
+                                        >
                                             + Agregar
                                         </button>
                                     </div>
@@ -130,95 +154,107 @@ const POS = ({ products, refreshProducts, refreshSales, cashSession, refreshSess
                             ))}
                         </div>
                     ) : (
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm py-16 text-center">
-                            <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Icon n="search" cls="w-8 h-8 text-gray-200" />
+                        <div className="bg-zinc-900 border border-zinc-850 rounded-2xl py-20 text-center shadow-lg">
+                            <div className="w-14 h-14 bg-zinc-950 rounded-xl flex items-center justify-center mx-auto mb-4 border border-zinc-850 text-zinc-600">
+                                <Icon n="search" cls="w-6 h-6" />
                             </div>
-                            <p className="text-gray-400 font-medium">Escribe para buscar productos</p>
-                            <p className="text-gray-300 text-sm mt-1">Busca por nombre o código de producto</p>
+                            <p className="text-zinc-400 font-bold text-sm">Escribe para buscar productos</p>
+                            <p className="text-zinc-655 text-xs font-semibold mt-1">Busca por nombre o código de barras</p>
                         </div>
                     )}
                 </div>
 
                 {/* Right: Cart */}
-                <div className="lg:col-span-2 flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm" style={{ minHeight: "400px" }}>
-                    <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
-                        <div className="w-9 h-9 bg-indigo-100 rounded-xl flex items-center justify-center">
-                            <Icon n="cart" cls="w-5 h-5 text-indigo-600" />
+                <div className="lg:col-span-2 flex flex-col bg-zinc-900 border border-zinc-850 rounded-2xl shadow-xl overflow-hidden" style={{ minHeight: "400px" }}>
+                    <div className="flex items-center gap-3 px-5 py-4 border-b border-zinc-850/80 bg-zinc-950/20">
+                        <div className="w-8 h-8 bg-red-950/30 border border-red-900/20 rounded-lg flex items-center justify-center">
+                            <Icon n="cart" cls="w-4 h-4 text-red-500" />
                         </div>
-                        <h3 className="font-bold text-gray-800">Carrito</h3>
+                        <h3 className="font-bold text-zinc-200 text-sm">Carrito</h3>
                         {cart.length > 0 && (
-                            <span className="ml-auto bg-indigo-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                            <span className="ml-auto bg-red-500 text-white text-xxs font-extrabold px-2 py-0.5 rounded-full">
                                 {cart.reduce((a, c) => a + c.qty, 0)}
                             </span>
                         )}
                     </div>
-                    <div className="flex-1 overflow-y-auto divide-y divide-gray-50">
+                    <div className="flex-1 overflow-y-auto divide-y divide-zinc-850/50">
                         {cart.length === 0 ? (
-                            <div className="py-12 text-center text-gray-400">
-                                <Icon n="cart" cls="w-10 h-10 mx-auto text-gray-200 mb-3" />
-                                <p className="text-sm">El carrito está vacío</p>
+                            <div className="py-20 text-center text-zinc-550">
+                                <Icon n="cart" cls="w-10 h-10 mx-auto text-zinc-700 mb-3" />
+                                <p className="text-xs font-bold uppercase tracking-wider">El carrito está vacío</p>
                             </div>
                         ) : cart.map((item) => (
-                            <div key={item.id} className="px-5 py-3 flex items-center gap-3">
+                            <div key={item.id} className="px-5 py-3.5 flex items-center gap-3 hover:bg-zinc-950/10">
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-gray-800 truncate">{item.name}</p>
-                                    <p className="text-xs text-gray-400">{fmt(item.salePrice)} c/u</p>
+                                    <p className="text-sm font-bold text-zinc-200 truncate">{item.name}</p>
+                                    <p className="text-xxs text-zinc-500 font-semibold mt-0.5">{fmt(item.salePrice)} c/u</p>
                                 </div>
-                                <div className="flex items-center gap-1 bg-gray-50 rounded-xl px-2 py-1">
-                                    <button onClick={() => updQty(item.id, item.qty - 1)} className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-700 font-bold">−</button>
-                                    <span className="w-7 text-center text-sm font-bold text-gray-700">{item.qty}</span>
-                                    <button onClick={() => updQty(item.id, item.qty + 1)} className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-700 font-bold">+</button>
+                                <div className="flex items-center gap-1.5 bg-zinc-950 border border-zinc-850 rounded-xl px-2 py-1">
+                                    <button onClick={() => updQty(item.id, item.qty - 1)} className="w-6 h-6 flex items-center justify-center text-zinc-500 hover:text-zinc-200 font-bold">−</button>
+                                    <span className="w-7 text-center text-xs font-bold text-zinc-300">{item.qty}</span>
+                                    <button onClick={() => updQty(item.id, item.qty + 1)} className="w-6 h-6 flex items-center justify-center text-zinc-500 hover:text-zinc-200 font-bold">+</button>
                                 </div>
-                                <span className="text-sm font-bold text-gray-800 w-14 text-right">{fmt(item.salePrice * item.qty)}</span>
-                                <button onClick={() => setCart(cart.filter((c) => c.id !== item.id))} className="text-gray-300 hover:text-red-500 transition-colors">
+                                <span className="text-sm font-bold text-zinc-200 w-16 text-right">{fmt(item.salePrice * item.qty)}</span>
+                                <button onClick={() => setCart(cart.filter((c) => c.id !== item.id))} className="text-zinc-600 hover:text-red-500 transition-colors ml-1.5">
                                     <Icon n="x" cls="w-4 h-4" />
                                 </button>
                             </div>
                         ))}
                     </div>
-                    <div className="p-5 border-t border-gray-100">
+                    <div className="p-5 border-t border-zinc-850/80 bg-zinc-950/10">
                         <div className="flex justify-between items-center mb-4">
-                            <span className="text-gray-500 font-medium">Total a cobrar</span>
-                            <span className="text-3xl font-extrabold text-gray-900">{fmt(total)}</span>
+                            <span className="text-zinc-450 text-xs font-bold uppercase tracking-wider">Total a cobrar</span>
+                            <span className="text-2xl font-extrabold text-zinc-100 tracking-tight">{fmt(total)}</span>
                         </div>
-                        <button onClick={checkout} disabled={!cart.length}
-                            className="w-full py-3.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 shadow-sm">
-                            <Icon n="check" cls="w-5 h-5" />Registrar Venta
+                        <button 
+                            onClick={checkout} 
+                            disabled={!cart.length}
+                            className="w-full py-3.5 bg-red-500 hover:bg-red-600 disabled:opacity-30 disabled:hover:bg-red-500 disabled:cursor-not-allowed text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg premium-glow-red"
+                        >
+                            <Icon n="check" cls="w-4 h-4" />Registrar Venta
                         </button>
                         {cart.length > 0 && (
-                            <button onClick={() => setCart([])} className="w-full mt-2 py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors">
+                            <button 
+                                onClick={() => setCart([])} 
+                                className="w-full mt-2.5 py-1 text-xs text-zinc-550 hover:text-zinc-400 font-bold uppercase tracking-wider transition-colors"
+                            >
                                 Vaciar carrito
                             </button>
                         )}
                     </div>
                 </div>
             </div>
+
             {/* Cash Modal */}
             {cashModal && (
                 <Modal title={cashSession ? "🔒 Cerrar Caja" : "🔓 Abrir Caja"} onClose={() => setCashModal(false)}>
                     <div className="space-y-4">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs text-zinc-450 leading-relaxed">
                             {cashSession
                                 ? "Ingresa el monto final reportado en caja para cerrar el turno."
-                                : "Ingresa el monto inicial con el que empiezas el turno."}
+                                : "Ingresa el monto inicial con el que empiezas el turno de caja."}
                         </p>
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 mb-1">Monto ($)</label>
+                            <label className="block text-xxs font-bold text-zinc-500 uppercase tracking-wider mb-2">Monto ($)</label>
                             <input
                                 autoFocus
                                 type="number"
                                 value={cashSession ? closingAmount : openingAmount}
                                 onChange={(e) => cashSession ? setClosingAmount(e.target.value) : setOpeningAmount(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                className="w-full px-4 py-3 border border-zinc-800 rounded-xl focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/20 bg-zinc-900 text-zinc-100 placeholder-zinc-600 font-semibold"
                                 placeholder="0.00"
                             />
                         </div>
-                        <div className="flex justify-end gap-3 pt-4">
-                            <button onClick={() => setCashModal(false)} className="px-5 py-2.5 text-sm font-medium text-gray-400">Cancelar</button>
+                        <div className="flex justify-end gap-3 pt-4 border-t border-zinc-850 mt-6">
+                            <button 
+                                onClick={() => setCashModal(false)} 
+                                className="px-4 py-2 border border-zinc-800 rounded-xl text-sm font-semibold text-zinc-350 hover:bg-zinc-900 transition-colors"
+                            >
+                                Cancelar
+                            </button>
                             <button
                                 onClick={cashSession ? closeCash : openCash}
-                                className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200"
+                                className="px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold hover:bg-red-600 premium-glow-red transition-colors animate-fade-in"
                             >
                                 {cashSession ? "Finalizar Turno" : "Comenzar Turno"}
                             </button>
@@ -227,18 +263,18 @@ const POS = ({ products, refreshProducts, refreshSales, cashSession, refreshSess
                 </Modal>
             )}
 
-            {/* Cash Status Check */}
+            {/* Cash Status Check Blocker Overlay */}
             {!cashSession && (
-                <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-sm flex items-center justify-center p-6 text-center">
-                    <div className="max-w-sm bg-white p-8 rounded-3xl shadow-2xl border border-gray-100">
-                        <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <Icon n="alert" cls="w-10 h-10" />
+                <div className="absolute inset-0 z-10 bg-zinc-950/75 backdrop-blur-md flex items-center justify-center p-6 text-center">
+                    <div className="max-w-sm bg-zinc-900 p-8 rounded-3xl shadow-2xl border border-zinc-800/80 animate-fade-in">
+                        <div className="w-16 h-16 bg-red-950/40 text-red-500 border border-red-900/30 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <Icon n="alert" cls="w-8 h-8" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Caja Cerrada</h3>
-                        <p className="text-gray-500 text-sm mb-6">Debes abrir una sesión de caja para poder registrar ventas y movimientos.</p>
+                        <h3 className="text-xl font-extrabold text-zinc-150 tracking-tight mb-2">Caja Cerrada</h3>
+                        <p className="text-zinc-450 text-xs font-semibold leading-relaxed mb-6">Debes abrir una sesión de caja para poder registrar ventas y realizar operaciones comerciales.</p>
                         <button
                             onClick={() => setCashModal(true)}
-                            className="w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all"
+                            className="w-full py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold premium-glow-red transition-all shadow-lg"
                         >
                             Abrir Caja Ahora
                         </button>

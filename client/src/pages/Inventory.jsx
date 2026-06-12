@@ -4,6 +4,7 @@ import Badge from "../components/ui/Badge";
 import Modal from "../components/ui/Modal";
 import { Inp, Sel } from "../components/ui/Forms";
 import { fmt, genId, isLow, CATS } from "../utils/helpers";
+import { api } from "../utils/api";
 
 const emptyProd = { id: "", name: "", category: "", costPrice: "", salePrice: "", stock: "", minStock: "" };
 
@@ -84,7 +85,7 @@ const Inventory = ({ products, refresh, toast }) => {
                     <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 border border-zinc-800 rounded-xl text-sm font-bold text-zinc-300 hover:bg-zinc-900/50 transition-colors shadow-sm">
                         <Icon n="download" cls="w-4 h-4 text-zinc-500" />Exportar CSV
                     </button>
-                    <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-colors shadow-sm">
+                    <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold hover:bg-red-600 transition-colors shadow-sm premium-glow-red">
                         <Icon n="plus" cls="w-4 h-4 text-red-200" />Nuevo Producto
                     </button>
                 </div>
@@ -93,7 +94,7 @@ const Inventory = ({ products, refresh, toast }) => {
             <div className="relative mb-4">
                 <Icon n="search" cls="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
                 <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nombre, ID o categoría..."
-                    className="w-full pl-11 pr-4 py-2.5 border border-zinc-850 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-650 bg-zinc-900 text-zinc-100 placeholder-zinc-550 transition-all" />
+                    className="w-full pl-11 pr-4 py-2.5 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/20 bg-zinc-900 text-zinc-100 placeholder-zinc-600 transition-all font-medium" />
             </div>
 
             <div className="bg-zinc-900 rounded-xl shadow-md border border-zinc-850/80 overflow-x-auto">
@@ -150,8 +151,8 @@ const Inventory = ({ products, refresh, toast }) => {
                         <Inp label="Stock Mínimo" type="number" value={form.minStock} onChange={(e) => f("minStock", e.target.value)} min="0" />
                     </div>
                     <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-zinc-850">
-                        <button onClick={() => setModal(null)} className="px-4 py-2 border border-zinc-800 rounded-xl text-sm font-semibold text-zinc-350 hover:bg-zinc-900">Cancelar</button>
-                        <button onClick={save} className="px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors">Guardar Producto</button>
+                        <button onClick={() => setModal(null)} className="px-4 py-2 border border-zinc-800 rounded-xl text-sm font-semibold text-zinc-350 hover:bg-zinc-900 transition-colors">Cancelar</button>
+                        <button onClick={save} className="px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold hover:bg-red-600 premium-glow-red transition-colors">Guardar Producto</button>
                     </div>
                 </Modal>
             )}
@@ -159,8 +160,8 @@ const Inventory = ({ products, refresh, toast }) => {
                 <Modal title="Confirmar Eliminación" onClose={() => setDelId(null)}>
                     <p className="text-zinc-400 text-sm mb-6">¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer.</p>
                     <div className="flex justify-end gap-3">
-                        <button onClick={() => setDelId(null)} className="px-4 py-2 border border-zinc-800 rounded-xl text-sm font-semibold text-zinc-350 hover:bg-zinc-900">Cancelar</button>
-                        <button onClick={() => remove(delId)} className="px-4 py-2 bg-red-650 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors">Sí, eliminar</button>
+                        <button onClick={() => setDelId(null)} className="px-4 py-2 border border-zinc-800 rounded-xl text-sm font-semibold text-zinc-350 hover:bg-zinc-900 transition-colors">Cancelar</button>
+                        <button onClick={() => remove(delId)} className="px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold hover:bg-red-600 premium-glow-red transition-colors">Sí, eliminar</button>
                     </div>
                 </Modal>
             )}
