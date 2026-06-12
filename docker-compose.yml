@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_almacen
+    environment:
+      - POSTGRES_USER=rober
+      - POSTGRES_PASSWORD=patron123
+      - POSTGRES_DB=almacen_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - wms_network
+
+  backend:
+    build: ./server
+    container_name: node_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://rober:patron123@db:5432/almacen_db
+      - JWT_SECRET=tu_secreto_super_seguro_cambiar_en_produccion
+    depends_on:
+      - db
+    networks:
+      - wms_network
+
+  frontend:
+    build: ./client
+    container_name: nginx_frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - wms_network
+
+volumes:
+  postgres_data:
+
+networks:
+  wms_network:
+    driver: bridge

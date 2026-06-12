@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #040405;
+  color: #e5e5e7;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar for a premium look */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #040405;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c1c1e;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2c2c2e;
+}
+
+/* Elevate components to feel hand-crafted */
+button, input, select, textarea {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-glow-red {
+  box-shadow: 0 0 20px rgba(229, 9, 20, 0.15);
+}
+
+.premium-glow-red:hover {
+  box-shadow: 0 0 25px rgba(229, 9, 20, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Subtle animations for page navigation */
+.animate-fade-in {
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modern inputs custom focus styles */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.15) !important;
+}
