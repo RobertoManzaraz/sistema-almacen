@@ -1,4 +1,4 @@
-const API_BASE = "/api";
+const API_BASE = "https://almacen-backend-xiaq.onrender.com/api";
 
 export const api = {
     async get(url) {
