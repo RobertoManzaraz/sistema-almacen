@@ -64,11 +64,11 @@ CREATE TABLE IF NOT EXISTS sale_items (
     unit_price  NUMERIC(10,2) NOT NULL
 );
 
--- Usuario administrador por defecto (password: admin123)
+-- Usuario administrador 
 INSERT INTO users (name, email, password, role)
 VALUES (
     'Administrador',
     'admin@wms.com',
-    '$2a$10$LnLazmXFtRC5pyhsAEShFesVrU0pG5N9T9OYWVII09sd/J//ElpN.',
+    '$2b$10$hOtsQbgSkG59PexqBzjm4Ow8D91UAWqKgafwDoeMv/P1.NO2hxkX.',
     'admin'
 ) ON CONFLICT (email) DO NOTHING;
