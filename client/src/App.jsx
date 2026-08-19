@@ -11,7 +11,7 @@ import { api } from "./utils/api";
 import { isLow } from "./utils/helpers";
 
 const NAV = [
-    { id: "dashboard", label: "Dashboard", icon: "home" },
+    { id: "dashboard", label: "Panel", icon: "home" },
     { id: "inventory", label: "Inventario", icon: "box" },
     { id: "pos", label: "Punto de Venta", icon: "cart" },
     { id: "suppliers", label: "Proveedores", icon: "users" },
@@ -128,7 +128,7 @@ export default function App() {
                     </div>
                     {sidebarOpen && (
                         <div>
-                            <p className="text-zinc-100 font-extrabold text-sm tracking-tight leading-tight">WMS Pro</p>
+                            <p className="text-zinc-100 font-extrabold text-sm tracking-tight leading-tight">Gestor de Stock</p>
                             <p className="text-zinc-550 text-xs font-bold uppercase tracking-wider">Almacén</p>
                         </div>
                     )}

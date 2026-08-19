@@ -18,7 +18,7 @@ const Dashboard = ({ products, sales, setActive }) => {
     return (
         <div>
             <div className="mb-6">
-                <h2 className="text-2xl font-bold text-zinc-100 tracking-tight">Dashboard</h2>
+                <h2 className="text-2xl font-bold text-zinc-100 tracking-tight">Panel</h2>
                 <p className="text-zinc-550 text-xs font-bold mt-1">
                     {new Date().toLocaleDateString("es-ES", { weekday: "long", year: "numeric", month: "long", day: "numeric" }).toUpperCase()}
                 </p>

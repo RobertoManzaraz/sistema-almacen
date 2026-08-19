@@ -1,0 +1,1 @@
+const { Client } = require("pg"); const client = new Client({ connectionString: process.argv[2], ssl: { rejectUnauthorized: false } }); client.connect() .then(() => client.query("SELECT email, password FROM users;")) .then(res => { console.table(res.rows); return client.end(); }) .catch(err => console.error("ERROR:", err.message));

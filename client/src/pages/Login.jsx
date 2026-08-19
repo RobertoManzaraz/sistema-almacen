@@ -16,7 +16,8 @@ export default function Login({ onLogin, toast }) {
             toast("¡Bienvenido al sistema!", "success");
             onLogin();
         } catch (err) {
-            toast("Credenciales inválidas o error de conexión", "error");
+            toast("Usuario o contraseña incorrectos", "error");
+            window.alert("Usuario o contraseña incorrectos");
         } finally {
             setLoading(false);
         }
@@ -32,7 +33,7 @@ export default function Login({ onLogin, toast }) {
                     <div className="w-12 h-12 bg-zinc-950/80 rounded-xl flex items-center justify-center mx-auto mb-4 border border-zinc-800 text-red-500 shadow-inner">
                         <Icon n="box" cls="w-5 h-5" />
                     </div>
-                    <h2 className="text-2xl font-extrabold text-zinc-100 tracking-tight">WMS Pro</h2>
+                    <h2 className="text-2xl font-extrabold text-zinc-100 tracking-tight">Gestor de Stock</h2>
                     <p className="mt-1.5 text-xxs text-zinc-500 uppercase tracking-widest font-bold">Gestión Profesional de Almacén</p>
                 </div>
 
